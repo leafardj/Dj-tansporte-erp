@@ -5,13 +5,17 @@ class Viagem {
   final int caminhaoId;
   final String origem;
   final String destino;
+  final DateTime dataSaida;
+  final DateTime? dataChegada;
   final double kmInicial;
   final double kmFinal;
   final double litrosDiesel;
-  final double valorDiesel;
+  final double valorLitroDiesel;
   final double litrosArla;
-  final double valorArla;
-  final double pedagio;
+  final double valorLitroArla;
+  final double pedagios;
+  final double alimentacao;
+  final double hospedagem;
   final double outrasDespesas;
   final double valorFrete;
 
@@ -22,13 +26,17 @@ class Viagem {
     required this.caminhaoId,
     required this.origem,
     required this.destino,
+    required this.dataSaida,
+    this.dataChegada,
     required this.kmInicial,
     required this.kmFinal,
     required this.litrosDiesel,
-    required this.valorDiesel,
+    required this.valorLitroDiesel,
     required this.litrosArla,
-    required this.valorArla,
-    required this.pedagio,
+    required this.valorLitroArla,
+    required this.pedagios,
+    required this.alimentacao,
+    required this.hospedagem,
     required this.outrasDespesas,
     required this.valorFrete,
   });
@@ -36,18 +44,21 @@ class Viagem {
   // Propriedades calculadas
   double get distancia => kmFinal - kmInicial;
 
-  double get custoDiesel => litrosDiesel * valorDiesel;
+  double get custoDiesel => litrosDiesel * valorLitroDiesel;
 
-  double get custoArla => litrosArla * valorArla;
+  double get custoArla => litrosArla * valorLitroArla;
 
   double get custoTotal =>
-      custoDiesel + custoArla + pedagio + outrasDespesas;
+      custoDiesel + custoArla + pedagios + alimentacao + hospedagem + outrasDespesas;
 
-  double get custoKm => distancia == 0 ? 0 : custoTotal / distancia;
+  double get custoPorKm => distancia <= 0 ? 0 : custoTotal / distancia;
 
-  double get mediaKmLitro => litrosDiesel == 0 ? 0 : distancia / litrosDiesel;
+  double get mediaKmLitro => litrosDiesel <= 0 ? 0 : distancia / litrosDiesel;
 
-  double get lucro => valorFrete - custoTotal;
+  double get lucroLiquido => valorFrete - custoTotal;
+
+  double get margemLucro =>
+      valorFrete <= 0 ? 0 : (lucroLiquido / valorFrete) * 100;
 
   // Converter para Map para banco de dados
   Map<String, dynamic> toMap() {
@@ -58,13 +69,17 @@ class Viagem {
       'caminhaoId': caminhaoId,
       'origem': origem,
       'destino': destino,
+      'dataSaida': dataSaida.toIso8601String(),
+      'dataChegada': dataChegada?.toIso8601String(),
       'kmInicial': kmInicial,
       'kmFinal': kmFinal,
       'litrosDiesel': litrosDiesel,
-      'valorDiesel': valorDiesel,
+      'valorLitroDiesel': valorLitroDiesel,
       'litrosArla': litrosArla,
-      'valorArla': valorArla,
-      'pedagio': pedagio,
+      'valorLitroArla': valorLitroArla,
+      'pedagios': pedagios,
+      'alimentacao': alimentacao,
+      'hospedagem': hospedagem,
       'outrasDespesas': outrasDespesas,
       'valorFrete': valorFrete,
     };
@@ -79,13 +94,19 @@ class Viagem {
       caminhaoId: map['caminhaoId'],
       origem: map['origem'],
       destino: map['destino'],
+      dataSaida: DateTime.parse(map['dataSaida']),
+      dataChegada: map['dataChegada'] != null
+          ? DateTime.parse(map['dataChegada'])
+          : null,
       kmInicial: map['kmInicial'],
       kmFinal: map['kmFinal'],
       litrosDiesel: map['litrosDiesel'],
-      valorDiesel: map['valorDiesel'],
+      valorLitroDiesel: map['valorLitroDiesel'],
       litrosArla: map['litrosArla'],
-      valorArla: map['valorArla'],
-      pedagio: map['pedagio'],
+      valorLitroArla: map['valorLitroArla'],
+      pedagios: map['pedagios'],
+      alimentacao: map['alimentacao'],
+      hospedagem: map['hospedagem'],
       outrasDespesas: map['outrasDespesas'],
       valorFrete: map['valorFrete'],
     );
@@ -99,13 +120,17 @@ class Viagem {
     int? caminhaoId,
     String? origem,
     String? destino,
+    DateTime? dataSaida,
+    DateTime? dataChegada,
     double? kmInicial,
     double? kmFinal,
     double? litrosDiesel,
-    double? valorDiesel,
+    double? valorLitroDiesel,
     double? litrosArla,
-    double? valorArla,
-    double? pedagio,
+    double? valorLitroArla,
+    double? pedagios,
+    double? alimentacao,
+    double? hospedagem,
     double? outrasDespesas,
     double? valorFrete,
   }) {
@@ -116,13 +141,17 @@ class Viagem {
       caminhaoId: caminhaoId ?? this.caminhaoId,
       origem: origem ?? this.origem,
       destino: destino ?? this.destino,
+      dataSaida: dataSaida ?? this.dataSaida,
+      dataChegada: dataChegada ?? this.dataChegada,
       kmInicial: kmInicial ?? this.kmInicial,
       kmFinal: kmFinal ?? this.kmFinal,
       litrosDiesel: litrosDiesel ?? this.litrosDiesel,
-      valorDiesel: valorDiesel ?? this.valorDiesel,
+      valorLitroDiesel: valorLitroDiesel ?? this.valorLitroDiesel,
       litrosArla: litrosArla ?? this.litrosArla,
-      valorArla: valorArla ?? this.valorArla,
-      pedagio: pedagio ?? this.pedagio,
+      valorLitroArla: valorLitroArla ?? this.valorLitroArla,
+      pedagios: pedagios ?? this.pedagios,
+      alimentacao: alimentacao ?? this.alimentacao,
+      hospedagem: hospedagem ?? this.hospedagem,
       outrasDespesas: outrasDespesas ?? this.outrasDespesas,
       valorFrete: valorFrete ?? this.valorFrete,
     );
