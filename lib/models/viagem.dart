@@ -1,10 +1,3 @@
-enum StatusViagem {
-  planejada,
-  emAndamento,
-  finalizada,
-  cancelada,
-}
-
 class Viagem {
   final int? id;
   final int clienteId;
@@ -12,15 +5,15 @@ class Viagem {
   final int caminhaoId;
   final String origem;
   final String destino;
-  final double quilometragemInicial;
-  final double quilometragemFinal;
+  final double kmInicial;
+  final double kmFinal;
+  final double litrosDiesel;
+  final double valorDiesel;
+  final double litrosArla;
+  final double valorArla;
+  final double pedagio;
+  final double outrasDespesas;
   final double valorFrete;
-  final DateTime dataSaida;
-  final DateTime? dataChegada;
-  final StatusViagem status;
-  final double? dieselGasto;
-  final double? arlaGasto;
-  final String? observacoes;
 
   Viagem({
     this.id,
@@ -29,30 +22,32 @@ class Viagem {
     required this.caminhaoId,
     required this.origem,
     required this.destino,
-    required this.quilometragemInicial,
-    required this.quilometragemFinal,
+    required this.kmInicial,
+    required this.kmFinal,
+    required this.litrosDiesel,
+    required this.valorDiesel,
+    required this.litrosArla,
+    required this.valorArla,
+    required this.pedagio,
+    required this.outrasDespesas,
     required this.valorFrete,
-    required this.dataSaida,
-    this.dataChegada,
-    this.status = StatusViagem.planejada,
-    this.dieselGasto,
-    this.arlaGasto,
-    this.observacoes,
   });
 
-  // Calcular quilometragem da viagem
-  double get quilometragemViagem => quilometragemFinal - quilometragemInicial;
+  // Propriedades calculadas
+  double get distancia => kmFinal - kmInicial;
 
-  // Calcular custo por km
-  double get custoPorKm {
-    if (quilometragemViagem == 0) return 0;
-    return (dieselGasto ?? 0) / quilometragemViagem;
-  }
+  double get custoDiesel => litrosDiesel * valorDiesel;
 
-  // Calcular lucro líquido
-  double get lucroLiquido {
-    return valorFrete - (dieselGasto ?? 0) - (arlaGasto ?? 0);
-  }
+  double get custoArla => litrosArla * valorArla;
+
+  double get custoTotal =>
+      custoDiesel + custoArla + pedagio + outrasDespesas;
+
+  double get custoKm => distancia == 0 ? 0 : custoTotal / distancia;
+
+  double get mediaKmLitro => litrosDiesel == 0 ? 0 : distancia / litrosDiesel;
+
+  double get lucro => valorFrete - custoTotal;
 
   // Converter para Map para banco de dados
   Map<String, dynamic> toMap() {
@@ -63,15 +58,15 @@ class Viagem {
       'caminhaoId': caminhaoId,
       'origem': origem,
       'destino': destino,
-      'quilometragemInicial': quilometragemInicial,
-      'quilometragemFinal': quilometragemFinal,
+      'kmInicial': kmInicial,
+      'kmFinal': kmFinal,
+      'litrosDiesel': litrosDiesel,
+      'valorDiesel': valorDiesel,
+      'litrosArla': litrosArla,
+      'valorArla': valorArla,
+      'pedagio': pedagio,
+      'outrasDespesas': outrasDespesas,
       'valorFrete': valorFrete,
-      'dataSaida': dataSaida.toIso8601String(),
-      'dataChegada': dataChegada?.toIso8601String(),
-      'status': status.toString().split('.').last,
-      'dieselGasto': dieselGasto,
-      'arlaGasto': arlaGasto,
-      'observacoes': observacoes,
     };
   }
 
@@ -84,19 +79,15 @@ class Viagem {
       caminhaoId: map['caminhaoId'],
       origem: map['origem'],
       destino: map['destino'],
-      quilometragemInicial: map['quilometragemInicial'],
-      quilometragemFinal: map['quilometragemFinal'],
+      kmInicial: map['kmInicial'],
+      kmFinal: map['kmFinal'],
+      litrosDiesel: map['litrosDiesel'],
+      valorDiesel: map['valorDiesel'],
+      litrosArla: map['litrosArla'],
+      valorArla: map['valorArla'],
+      pedagio: map['pedagio'],
+      outrasDespesas: map['outrasDespesas'],
       valorFrete: map['valorFrete'],
-      dataSaida: DateTime.parse(map['dataSaida']),
-      dataChegada: map['dataChegada'] != null
-          ? DateTime.parse(map['dataChegada'])
-          : null,
-      status: StatusViagem.values.firstWhere(
-        (e) => e.toString().split('.').last == map['status'],
-      ),
-      dieselGasto: map['dieselGasto'],
-      arlaGasto: map['arlaGasto'],
-      observacoes: map['observacoes'],
     );
   }
 
@@ -108,15 +99,15 @@ class Viagem {
     int? caminhaoId,
     String? origem,
     String? destino,
-    double? quilometragemInicial,
-    double? quilometragemFinal,
+    double? kmInicial,
+    double? kmFinal,
+    double? litrosDiesel,
+    double? valorDiesel,
+    double? litrosArla,
+    double? valorArla,
+    double? pedagio,
+    double? outrasDespesas,
     double? valorFrete,
-    DateTime? dataSaida,
-    DateTime? dataChegada,
-    StatusViagem? status,
-    double? dieselGasto,
-    double? arlaGasto,
-    String? observacoes,
   }) {
     return Viagem(
       id: id ?? this.id,
@@ -125,15 +116,15 @@ class Viagem {
       caminhaoId: caminhaoId ?? this.caminhaoId,
       origem: origem ?? this.origem,
       destino: destino ?? this.destino,
-      quilometragemInicial: quilometragemInicial ?? this.quilometragemInicial,
-      quilometragemFinal: quilometragemFinal ?? this.quilometragemFinal,
+      kmInicial: kmInicial ?? this.kmInicial,
+      kmFinal: kmFinal ?? this.kmFinal,
+      litrosDiesel: litrosDiesel ?? this.litrosDiesel,
+      valorDiesel: valorDiesel ?? this.valorDiesel,
+      litrosArla: litrosArla ?? this.litrosArla,
+      valorArla: valorArla ?? this.valorArla,
+      pedagio: pedagio ?? this.pedagio,
+      outrasDespesas: outrasDespesas ?? this.outrasDespesas,
       valorFrete: valorFrete ?? this.valorFrete,
-      dataSaida: dataSaida ?? this.dataSaida,
-      dataChegada: dataChegada ?? this.dataChegada,
-      status: status ?? this.status,
-      dieselGasto: dieselGasto ?? this.dieselGasto,
-      arlaGasto: arlaGasto ?? this.arlaGasto,
-      observacoes: observacoes ?? this.observacoes,
     );
   }
 }
