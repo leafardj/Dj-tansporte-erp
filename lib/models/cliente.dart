@@ -1,24 +1,18 @@
 class Cliente {
   final int? id;
   final String nome;
+  final String cpfCnpj;
   final String telefone;
   final String email;
   final String endereco;
-  final String cidade;
-  final String estado;
-  final String cnpj;
-  final DateTime dataCadastro;
 
   Cliente({
     this.id,
     required this.nome,
+    required this.cpfCnpj,
     required this.telefone,
     required this.email,
     required this.endereco,
-    required this.cidade,
-    required this.estado,
-    required this.cnpj,
-    required this.dataCadastro,
   });
 
   // Converter para Map para banco de dados
@@ -26,13 +20,10 @@ class Cliente {
     return {
       'id': id,
       'nome': nome,
+      'cpfCnpj': cpfCnpj,
       'telefone': telefone,
       'email': email,
       'endereco': endereco,
-      'cidade': cidade,
-      'estado': estado,
-      'cnpj': cnpj,
-      'dataCadastro': dataCadastro.toIso8601String(),
     };
   }
 
@@ -41,13 +32,10 @@ class Cliente {
     return Cliente(
       id: map['id'],
       nome: map['nome'],
+      cpfCnpj: map['cpfCnpj'],
       telefone: map['telefone'],
       email: map['email'],
       endereco: map['endereco'],
-      cidade: map['cidade'],
-      estado: map['estado'],
-      cnpj: map['cnpj'],
-      dataCadastro: DateTime.parse(map['dataCadastro']),
     );
   }
 
@@ -55,24 +43,18 @@ class Cliente {
   Cliente copyWith({
     int? id,
     String? nome,
+    String? cpfCnpj,
     String? telefone,
     String? email,
     String? endereco,
-    String? cidade,
-    String? estado,
-    String? cnpj,
-    DateTime? dataCadastro,
   }) {
     return Cliente(
       id: id ?? this.id,
       nome: nome ?? this.nome,
+      cpfCnpj: cpfCnpj ?? this.cpfCnpj,
       telefone: telefone ?? this.telefone,
       email: email ?? this.email,
       endereco: endereco ?? this.endereco,
-      cidade: cidade ?? this.cidade,
-      estado: estado ?? this.estado,
-      cnpj: cnpj ?? this.cnpj,
-      dataCadastro: dataCadastro ?? this.dataCadastro,
     );
   }
 }
